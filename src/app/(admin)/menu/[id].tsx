@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { useState } from "react";
 
@@ -7,6 +7,7 @@ import Colors from "@/src/constants/Colors";
 import { PizzaSize } from "@/assets/types";
 import Button from "@/src/components/Button";
 import { useCart } from "@/src/customHooks/cart-context";
+import { FontAwesome } from "@expo/vector-icons";
 
 const size: PizzaSize[] = ["S", "M", "L", "XL"];
 const ProductDetails = () => {
@@ -27,47 +28,42 @@ const ProductDetails = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: product.name }} />
+      <Stack.Screen
+        options={{
+          title: product.name,
+          headerRight: () => (
+            <Link href="/cart" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="pencil-square-o"
+                    size={25}
+                    color={Colors.light.tabIconSelected}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
       <Image
         source={{ uri: product.image }}
         alt={product.name}
         style={styles.image}
       />
-      <Text>Select Size</Text>
-      <View style={styles.sizes}>
-        {size.map((s, i) => (
-          <Pressable
-            onPress={() => {
-              setSelectedSize(s);
-            }}
-            key={i}
-            style={[
-              styles.size,
-              {
-                backgroundColor:
-                  selectedSize === s
-                    ? "gainsboro"
-                    : `${Colors.dark.background}`,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.sizeText,
-                {
-                  color: selectedSize === s ? "white" : "gray",
-                },
-              ]}
-            >
-              {s}
-            </Text>
-          </Pressable>
-        ))}
+
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: 12,
+          flexDirection: "row",
+        }}
+      >
+        <Text style={styles.title}>{product.name}</Text>
+        <Text style={styles.price}>${product.price}</Text>
       </View>
-
-      <Text style={styles.price}>${product.price}</Text>
-
-      <Button text="Add to cart" onPress={addToCart} />
     </View>
   );
 };
@@ -83,11 +79,14 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignSelf: "center",
   },
-  title: {},
-  price: {
-    marginTop: "auto",
-    fontWeight: "bold",
+  title: {
+    fontWeight: "600",
     fontSize: 20,
+  },
+  price: {
+    // marginTop: "auto",
+    fontWeight: "400",
+    fontSize: 16,
   },
   button: {
     paddingVertical: 15,
