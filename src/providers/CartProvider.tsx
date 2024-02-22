@@ -6,12 +6,14 @@ type CartType = {
   items: CartItem[];
   addItem: (product: Product, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
+  totalPrice: number;
 };
 
 export const CartContext = createContext<CartType>({
   items: [],
   addItem: () => {},
   updateQuantity: () => {},
+  totalPrice: 0,
 });
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -27,6 +29,8 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // TODO: Add products to items
+
     const newCartItem: CartItem = {
       id: randomUUID(),
       product,
@@ -39,6 +43,7 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
 
     console.log(items);
   };
+
   // TODO: Update quantity
   const updateQuantity = (itemId: string, amount: -1 | 1) => {
     // console.log(itemId, amount);
@@ -56,8 +61,16 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     console.log(updateItems);
   };
 
+  // TODO: Calculate total price
+  const totalPrice = items.reduce(
+    (sum, item) => (sum += item.product.price * item.quantity),
+    0
+  );
+
   return (
-    <CartContext.Provider value={{ items, addItem, updateQuantity }}>
+    <CartContext.Provider
+      value={{ items, addItem, updateQuantity, totalPrice }}
+    >
       {children}
     </CartContext.Provider>
   );
