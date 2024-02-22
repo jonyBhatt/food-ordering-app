@@ -4,5 +4,12 @@ import { Link, Stack } from "expo-router";
 import { Pressable } from "react-native";
 
 export default function MenuStack() {
-  return <Stack screenOptions={{}} />;
+  return (
+    <Stack>
+      <Stack.Screen
+        name="create"
+        options={{ presentation: "modal", animation: "slide_from_left" }}
+      />
+    </Stack>
+  );
 }
